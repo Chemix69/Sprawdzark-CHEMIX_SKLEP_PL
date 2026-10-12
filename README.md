@@ -13,7 +13,7 @@ Aplikacja:
 
 ## Uprawnienia (scopes)
 
-Aplikacja prosi wyłącznie o uprawnienia do odczytu:
+Aplikacja prosi wyłącznie o uprawnienia do odczytu (wszystkie z końcówką `:read`):
 
 | Uprawnienie | Po co |
 |---|---|
@@ -22,6 +22,10 @@ Aplikacja prosi wyłącznie o uprawnienia do odczytu:
 | `allegro:api:billing:read` | Odczyt opłat i prowizji na koncie – wyliczenie marży po prowizji Allegro, uzgadnianie faktur od Allegro |
 | `allegro:api:payments:read` | Odczyt historii płatności – uzgadnianie wpływów z zamówieniami i dokumentami w ERP |
 | `allegro:api:profile:read` | Identyfikacja, którego z kont firmy dotyczy autoryzacja (login konta) |
+| `allegro:api:sale:settings:read` | Odczyt ustawień sprzedaży (cenniki dostaw, warunki zwrotów i reklamacji) – do analizy kosztów wysyłki i porównania z danymi w ERP |
+| `allegro:api:shipments:read` | Odczyt przesyłek (statusy, przewoźnik, terminy nadania) – kontrola terminowości wysyłek i zgodności z dokumentami magazynowymi |
+| `allegro:api:fulfillment:read` | Odczyt danych One Fulfillment (awiza, stany magazynowe w Allegro) – jeśli firma korzysta z usługi; porównanie stanów z ERP |
+| `allegro:api:affiliate:read` | Odczyt danych programów afiliacyjnych – raportowanie ewentualnych prowizji/kosztów programów partnerskich |
 
 Aplikacja **nie korzysta** z żadnego uprawnienia typu `write` ani z uprawnień do wiadomości, ocen, sporów, licytacji i reklam.
 
@@ -36,6 +40,10 @@ Aplikacja **nie korzysta** z żadnego uprawnienia typu `write` ani z uprawnień 
 | `GET /order/customer-returns` | `allegro:api:orders:read` | Zwroty – statystyki zwrotów per towar |
 | `GET /billing/billing-entries`, `GET /billing/billing-types` | `allegro:api:billing:read` | Opłaty i prowizje per oferta/zamówienie |
 | `GET /payments/payment-operations` | `allegro:api:payments:read` | Operacje płatnicze do uzgodnień |
+| `GET /sale/delivery-settings`, `GET /sale/shipping-rates` | `allegro:api:sale:settings:read` | Ustawienia i cenniki dostaw |
+| `GET /shipment-management/…` (odczyt przesyłek) | `allegro:api:shipments:read` | Statusy i terminy nadania przesyłek |
+| `GET /fulfillment/…` (odczyt stanów/awiz) | `allegro:api:fulfillment:read` | Stany i awiza One Fulfillment (jeśli używane) |
+| Zasoby programów afiliacyjnych (odczyt) | `allegro:api:affiliate:read` | Raport kosztów/prowizji programów partnerskich (jeśli używane) |
 
 ## Autoryzacja
 
@@ -67,4 +75,4 @@ Właściciel aplikacji: Chemix, e-mail: bartosz@chemix.sklep.pl
 
 ## English summary
 
-**Chemix Mózg** is an internal, **read-only** analytics assistant used only by Chemix owners and employees (Allegro seller accounts `Chemix_sklep_pl`, `chemixshop`, `clean_house`). It reads the seller's own offers (`allegro:api:sale:offers:read`), orders and returns (`allegro:api:orders:read`), fees (`allegro:api:billing:read`), payment operations (`allegro:api:payments:read`) and the account login (`allegro:api:profile:read`) in order to compare them with stock and prices in the company ERP (Comarch ERP Optima), calculate margins after Allegro fees and prepare internal reports. It never creates or modifies offers or orders and requests no write scopes. Authorization uses OAuth 2.0 Device Code Flow; app secrets are kept in server environment variables and tokens in a file outside the code repository. Buyers' personal data is filtered out before analysis and is not stored; analyses are prepared by an AI assistant (Claude, Anthropic) that receives commercial data only. Results are shared only internally; no data is shared with third parties. API usage is low-volume and respects rate limits. Contact: bartosz@chemix.sklep.pl
+**Chemix Mózg** is an internal, **read-only** analytics assistant used only by Chemix owners and employees (Allegro seller accounts `Chemix_sklep_pl`, `chemixshop`, `clean_house`). It reads the seller's own offers (`allegro:api:sale:offers:read`), orders and returns (`allegro:api:orders:read`), fees (`allegro:api:billing:read`), payment operations (`allegro:api:payments:read`), the account login (`allegro:api:profile:read`), sale/delivery settings (`allegro:api:sale:settings:read`), shipments (`allegro:api:shipments:read`), One Fulfillment data (`allegro:api:fulfillment:read`) and affiliate programme data (`allegro:api:affiliate:read`) – all read-only – in order to compare them with stock and prices in the company ERP (Comarch ERP Optima), calculate margins after Allegro fees and prepare internal reports. It never creates or modifies offers or orders and requests no write scopes. Authorization uses OAuth 2.0 Device Code Flow; app secrets are kept in server environment variables and tokens in a file outside the code repository. Buyers' personal data is filtered out before analysis and is not stored; analyses are prepared by an AI assistant (Claude, Anthropic) that receives commercial data only. Results are shared only internally; no data is shared with third parties. API usage is low-volume and respects rate limits. Contact: bartosz@chemix.sklep.pl
